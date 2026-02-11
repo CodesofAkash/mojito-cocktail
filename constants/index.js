@@ -100,12 +100,55 @@ const goodLists = [
     "Freshly muddled flavors",
 ];
 
+const companyInfo = {
+    name: "Velvet Pour",
+    tagline: "Cool. Crisp. Classic",
+    slogan: "Sip the spirit of Summer",
+    logo: "/images/logo.png",
+};
+
+const heroContent = {
+    title: "MOJITO",
+    tagline: "Cool. Crisp. Classic",
+    subtitle: "Sip the spirit of Summer",
+    description: "Every cocktail on our menu is a blend of premium ingredients, creative flair, and timeless recipes — designed to delight your senses.",
+    ctaText: "View Cocktails",
+    ctaLink: "#cocktails",
+    backgroundVideo: "/videos/output.mp4",
+};
+
+const aboutContent = {
+    badge: "Best Cocktails",
+    heading: "Where every detail matters - from muddle to garnish",
+    description: "Every cocktail we serve is a reflection of our obsession with detail — from the first muddle to the final garnish. That care is what turns a simple drink into something truly memorable.",
+    rating: "4.5",
+    maxRating: "5",
+    customerCount: "More than +1200 customers",
+};
+
+const artContent = {
+    mainTitle: "The ART",
+    revealTitle: "Sip-Worthy Perfection",
+    revealSubtitle: "Made with Craft, Poured with Passion",
+    revealDescription: "This isn't just a drink. It's a carefully crafted moment made just for you.",
+};
+
+const cocktailsContent = {
+    popularTitle: "Most popular cocktails:",
+    lovedTitle: "Most loved mocktails:",
+};
+
+const menuContent = {
+    heading: "Cocktail Menu",
+    recipeLabel: "Recipe for:",
+};
+
 const storeInfo = {
     heading: "Where to Find Us",
     address: "456, Raq Blvd. #404, Los Angeles, CA 90210",
     contact: {
         phone: "(555) 987-6543",
-        email: "hello@jsmcocktail.com",
+        email: "akashcodesharma@gmail.com",
     },
 };
 
@@ -133,6 +176,15 @@ const socials = [
         url: "#",
     },
 ];
+
+const seoConfig = {
+    title: "Velvet Pour | Premium Cocktails & Mocktails Bar in Los Angeles",
+    description: "Experience the art of mixology at Velvet Pour. Premium cocktails, craft mocktails, and timeless recipes in the heart of Los Angeles. Where every detail matters - from muddle to garnish.",
+    keywords: "cocktails, mocktails, bar, Los Angeles, mojito, premium drinks, craft cocktails, mixology, cocktail bar",
+    author: "Velvet Pour",
+    ogImage: "/images/hero-img.png",
+    twitterHandle: "@velvetpour",
+};
 
 const sliderLists = [
     {
@@ -180,4 +232,11 @@ export {
     storeInfo,
     socials,
     sliderLists,
+    companyInfo,
+    heroContent,
+    aboutContent,
+    artContent,
+    cocktailsContent,
+    menuContent,
+    seoConfig,
 };

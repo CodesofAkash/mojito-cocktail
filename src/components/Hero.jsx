@@ -3,6 +3,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { SplitText } from "gsap/all";
 import { useMediaQuery } from "react-responsive";
+import { heroContent } from "../../constants/index.js";
 
 const Hero = () => {
 
@@ -44,7 +45,7 @@ const Hero = () => {
         .to('.left-leaf', { y: -200 }, 0)
 
     const startValue = isMobile ? 'top 50%' : 'center 60%';
-    const endValue = isMobile ? '120% top' : 'bottom top';
+    const endValue = isMobile ? '155% top' : 'bottom top';
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -67,7 +68,7 @@ const Hero = () => {
   return (
       <>
         <section id="hero" className="noisy">
-          <h1 className="title">MOJITO</h1>
+          <h1 className="title">{heroContent.title}</h1>
 
           <img src="/images/hero-left-leaf.png" alt="left-leaf" className="left-leaf"/>
 
@@ -76,24 +77,24 @@ const Hero = () => {
           <div className="body">
             <div className="content">
               <div className="space-y-5 hidden md:block">
-                <p>Cool. Crisp. Classic</p>
+                <p>{heroContent.tagline}</p>
                 <p className="subtitle">
-                  Sip the spirit <br /> of Summer
+                  {heroContent.subtitle.split(' ').slice(0, 3).join(' ')} <br /> {heroContent.subtitle.split(' ').slice(3).join(' ')}
                 </p>
               </div>
 
               <div className="view-cocktails">
                 <p className="subtitle">
-                  Every cocktail on our menu is a blend of premium ingredients, creative flair, and timeless recipes — designed to delight your senses.
+                  {heroContent.description}
                 </p>
-                <a href="#cocktails">View Cocktails</a>
+                <a href={heroContent.ctaLink}>{heroContent.ctaText}</a>
               </div>
             </div>
           </div>
         </section>
 
         <div className="video absolute inset-0">
-          <video ref={videoRef} src="/videos/output.mp4" muted playsInline preload="auto" />
+          <video ref={videoRef} src={heroContent.backgroundVideo} muted playsInline preload="auto" />
         </div>
       </>
   );

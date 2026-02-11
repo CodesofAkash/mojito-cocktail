@@ -1,5 +1,5 @@
 import React from 'react';
-import {featureLists, goodLists} from "../../constants/index.js";
+import {featureLists, goodLists, artContent} from "../../constants/index.js";
 import {useMediaQuery} from "react-responsive";
 import {useGSAP} from "@gsap/react";
 import gsap from 'gsap';
@@ -46,7 +46,7 @@ const Art = () => {
   return (
     <div id={"art"}>
         <div className="container mx-auto h-full pt-20">
-            <h2 className="will-fade">The ART</h2>
+            <h2 className="will-fade">{artContent.mainTitle}</h2>
 
             <div className="content">
                 <ul className="space-y-4 will-fade">
@@ -73,10 +73,10 @@ const Art = () => {
             </div>
 
             <div className="masked-container">
-                <h2 className="will-fade">Sip-Worthy Perfection</h2>
+                <h2 className="will-fade">{artContent.revealTitle}</h2>
                 <div id="masked-content">
-                    <h3>Made with Craft, Poured with Passion</h3>
-                    <p>This isn’t just a drink. It’s a carefully crafted moment made just for you.</p>
+                    <h3>{artContent.revealSubtitle}</h3>
+                    <p>{artContent.revealDescription}</p>
                 </div>
             </div>
         </div>

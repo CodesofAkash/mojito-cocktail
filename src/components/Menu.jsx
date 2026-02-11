@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {sliderLists} from "../../constants/index.js";
+import {sliderLists, menuContent} from "../../constants/index.js";
 import {useGSAP} from "@gsap/react";
 import gsap from 'gsap';
 
@@ -60,7 +60,7 @@ const Menu = () => {
         <img src="/images/slider-right-leaf.png" alt="right-leaf" id={"m-right-leaf"}/>
 
         <h2 id="menu-heading" className="sr-only">
-            Cocktail Menu
+            {menuContent.heading}
         </h2>
 
         <nav className="cocktail-tabs" aria-label="Cocktail Navigation">
@@ -90,7 +90,7 @@ const Menu = () => {
 
             <div className="recipe">
                 <div ref={contentRef} className="info">
-                    <p>Recipe for:</p>
+                    <p>{menuContent.recipeLabel}</p>
                     <p id="title">{currentCocktail.name}</p>
                 </div>
                 <div className="details">

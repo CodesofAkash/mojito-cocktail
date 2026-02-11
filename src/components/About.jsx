@@ -2,6 +2,7 @@ import React from 'react';
 import {useGSAP} from "@gsap/react";
 import { SplitText } from 'gsap/all'
 import gsap from 'gsap';
+import { aboutContent } from "../../constants/index.js";
 
 const About = () => {
 
@@ -36,24 +37,23 @@ const About = () => {
          <div className="mb-16 md:px-0 px-5">
             <div className="content">
                 <div className="md:col-span-8">
-                    <p className="badge">Best Cocktails</p>
+                    <p className="badge">{aboutContent.badge}</p>
                     <h2>
-                        Where every detail matters <span className="text-white">-</span>
-                        from muddle to garnish
+                        {aboutContent.heading}
                     </h2>
                 </div>
 
                 <div className="sub-content">
                     <p>
-                        Every cocktail we serve is a reflection of our obsession with detail — from the first muddle to the final garnish. That care is what turns a simple drink into something truly memorable.
+                        {aboutContent.description}
                     </p>
 
                     <div>
                         <p className="md:text-3xl text-xl font-bold">
-                            <span>4.5</span>/5
+                            <span>{aboutContent.rating}</span>/{aboutContent.maxRating}
                         </p>
                         <p className="text-sm text-white-100">
-                            More than +1200 customers
+                            {aboutContent.customerCount}
                         </p>
                     </div>
                 </div>
@@ -94,10 +94,6 @@ const About = () => {
 };
 
 export default About;
-
-
-
-
 
 
 
