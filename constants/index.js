@@ -145,9 +145,9 @@ const menuContent = {
 
 const storeInfo = {
     heading: "Where to Find Us",
-    address: "456, Raq Blvd. #404, Los Angeles, CA 90210",
+    address: "54A, Gandhi Nagar, Jammu, Jammu & Kashmir, India",
     contact: {
-        phone: "(555) 987-6543",
+        phone: "(91) 9596112777",
         email: "akashcodesharma@gmail.com",
     },
 };
@@ -163,17 +163,12 @@ const socials = [
     {
         name: "Instagram",
         icon: "/images/insta.png",
-        url: "#",
+        url: "https://www.instagram.com/codesofakash/",
     },
     {
         name: "X (Twitter)",
         icon: "/images/x.png",
-        url: "#",
-    },
-    {
-        name: "Facebook",
-        icon: "/images/fb.png",
-        url: "#",
+        url: "https://x.com/CodesOfAkash",
     },
 ];
 
@@ -183,7 +178,7 @@ const seoConfig = {
     keywords: "cocktails, mocktails, bar, Los Angeles, mojito, premium drinks, craft cocktails, mixology, cocktail bar",
     author: "Velvet Pour",
     ogImage: "/images/hero-img.png",
-    twitterHandle: "@velvetpour",
+    twitterHandle: "@CodesOfAkash",
 };
 
 const sliderLists = [
