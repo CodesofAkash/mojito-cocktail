@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useInteractionGate } from "./useInteractionGate";
 import { useNearViewport } from "./useNearViewport";
 import { useIsMobile, useReducedMotion } from "./useReducedMotion";
 import { EASE, PRESET_FROM, resolve, type AnimationSettings } from "@/lib/animation";
@@ -21,10 +22,12 @@ export function SectionMotion({ kind, settings, children }: Props) {
 
   const skip = !a.enabled || reduced || (a.disableOnMobile && isMobile);
   const near = useNearViewport(scope);
+  // Desktop opens immediately; a phone waits for the first scroll.
+  const gated = useInteractionGate(isMobile);
   const [mod, setMod] = useState<typeof import("./gsap-init") | null>(null);
 
   useEffect(() => {
-    if (skip || !near || mod) return;
+    if (skip || !near || !gated || mod) return;
     let alive = true;
     void import("./gsap-init").then((m) => {
       if (alive) setMod(m);
@@ -32,7 +35,7 @@ export function SectionMotion({ kind, settings, children }: Props) {
     return () => {
       alive = false;
     };
-  }, [skip, near, mod]);
+  }, [skip, near, gated, mod]);
 
   useEffect(() => {
     if (!mod || skip || !scope.current) return;

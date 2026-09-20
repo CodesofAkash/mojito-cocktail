@@ -46,20 +46,36 @@ export function HeroVideo({ src, poster }: Props) {
     const track = trackRef.current;
     if (!track) return;
 
+    let raf = 0;
+    let last = -1;
+
     const size = () => {
+      raf = 0;
       const second = document.querySelector("#cocktails") ?? document.querySelector("#hero");
       if (!second) return;
-      const bottom = second.getBoundingClientRect().bottom + window.scrollY;
-      track.style.height = `${Math.round(bottom)}px`;
+      const bottom = Math.round(second.getBoundingClientRect().bottom + window.scrollY);
+      // Writing an unchanged height still invalidates layout, and the observer
+      // that woke us fires again on the result.
+      if (bottom === last) return;
+      last = bottom;
+      track.style.height = `${bottom}px`;
+    };
+
+    // Every image that lands resizes the body. Measuring inline would force a
+    // synchronous reflow on each one — reading a rect straight after writing a
+    // height is the classic thrash, and there are three dozen images here.
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(size);
     };
 
     size();
-    const ro = new ResizeObserver(size);
+    const ro = new ResizeObserver(schedule);
     ro.observe(document.body);
-    window.addEventListener("resize", size);
+    window.addEventListener("resize", schedule);
     return () => {
+      if (raf) cancelAnimationFrame(raf);
       ro.disconnect();
-      window.removeEventListener("resize", size);
+      window.removeEventListener("resize", schedule);
     };
   }, []);
 
