@@ -14,7 +14,9 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     // Sanity's studio bundle is large; keep it out of the main graph.
-    optimizePackageImports: ["lucide-react", "@sanity/image-url"],
+    optimizePackageImports: ["@sanity/image-url"],
+    // Inlines the CSS into the document so it stops blocking first paint.
+    inlineCss: true,
   },
 };
 

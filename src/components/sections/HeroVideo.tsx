@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ScrollTrigger, useGSAP } from "../motion/gsap-init";
-import { useReducedMotion } from "../motion/useReducedMotion";
+import { useIsMobile, useReducedMotion } from "../motion/useReducedMotion";
 
 type Props = { src: string | null; poster: string | null };
 
@@ -12,12 +12,15 @@ export function HeroVideo({ src, poster }: Props) {
   const startedRef = useRef(false);
   const [ready, setReady] = useState(false);
   const reduced = useReducedMotion();
+  const isMobile = useIsMobile();
 
   // Always in the DOM so `video { ... }` styles it and the poster paints;
   // preload="none" keeps the file off the critical path until idle.
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !src || reduced || startedRef.current) return;
+    // Mobile keeps the poster only: 1.9 MB for an effect that barely reads
+    // on a phone, and it was the LCP element.
+    if (!video || !src || reduced || isMobile || startedRef.current) return;
 
     // Each load() aborts the in-flight fetch, so re-running this effect
     // cancels the download forever. Fire exactly once.
@@ -34,7 +37,7 @@ export function HeroVideo({ src, poster }: Props) {
       if (window.cancelIdleCallback) window.cancelIdleCallback(id as number);
       else window.clearTimeout(id as number);
     };
-  }, [src, reduced]);
+  }, [src, reduced, isMobile]);
 
   // The track spans sections one and two; the sticky child rides along and is
   // carried away naturally at the track's end. Native sticky rather than a

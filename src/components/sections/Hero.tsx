@@ -20,9 +20,13 @@ export type HeroData = {
 
 export function Hero({ data }: { data: HeroData }) {
   const subtitleWords = data.subtitle?.split(" ") ?? [];
+  const posterUrl = data.poster?.url ?? null;
 
   return (
     <SectionMotion kind="hero" settings={data.animation ?? null}>
+      {posterUrl && (
+        <link rel="preload" as="image" href={posterUrl} fetchPriority="high" />
+      )}
       <HeroVideo src={data.videoUrl ?? null} poster={data.poster?.url ?? null} />
 
       <SectionWrapper id="hero" className="noisy">
