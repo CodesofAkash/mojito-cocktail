@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ScrollTrigger, useGSAP } from "../motion/gsap-init";
+import { useGsap } from "../motion/useGsap";
 import { useIsMobile, useReducedMotion } from "../motion/useReducedMotion";
 
 type Props = { src: string | null; poster: string | null };
@@ -79,10 +79,15 @@ export function HeroVideo({ src, poster }: Props) {
     };
   }, []);
 
-  useGSAP(() => {
+  // `ready` needs canplaythrough, which needs the video to have loaded — so
+  // this never becomes true on mobile, and GSAP is never fetched there.
+  const mod = useGsap(ready && !reduced);
+
+  useEffect(() => {
     const video = videoRef.current;
     const track = trackRef.current;
-    if (!video || !track || !ready || reduced) return;
+    if (!mod || !video || !track || !ready || reduced) return;
+    const { ScrollTrigger } = mod;
 
     let target = 0;
     let seeking = false;
@@ -119,7 +124,7 @@ export function HeroVideo({ src, poster }: Props) {
       cancelAnimationFrame(raf);
       st.kill();
     };
-  }, [ready, reduced]);
+  }, [mod, ready, reduced]);
 
   if (!src) return null;
 
