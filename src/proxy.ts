@@ -7,8 +7,16 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const [, first = ""] = pathname.split("/");
 
-  // Already locale-prefixed — leave it alone.
-  if (LOCALE_PATTERN.test(first)) return NextResponse.next();
+  if (LOCALE_PATTERN.test(first)) {
+    // The default locale is served at "/", so its prefixed form would be a
+    // duplicate URL. Send it to the canonical one.
+    if (first === DEFAULT_LOCALE) {
+      const url = request.nextUrl.clone();
+      url.pathname = pathname.slice(first.length + 1) || "/";
+      return NextResponse.redirect(url, 308);
+    }
+    return NextResponse.next();
+  }
 
   // Rewrite, not redirect: the visitor keeps the clean "/" URL while the app
   // renders the default locale's route underneath.

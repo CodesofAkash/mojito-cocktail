@@ -32,14 +32,12 @@ export function Hero({ data }: { data: HeroData }) {
           image={data.leftLeaf ?? null}
           alt=""
           className="left-leaf"
-          sizes="(max-width: 768px) 30vw, 20vw"
           eager
         />
         <SanityImage
           image={data.rightLeaf ?? null}
           alt=""
           className="right-leaf"
-          sizes="(max-width: 768px) 30vw, 20vw"
           eager
         />
 

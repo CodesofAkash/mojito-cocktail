@@ -1,0 +1,7 @@
+# Seed source images are uploaded to Sanity once by scripts/seed.mjs.
+# They are never served, so they should not be part of a deployment.
+scripts/seed-assets
+
+# Local tooling and notes, already git-excluded.
+.claude
+.claude-local

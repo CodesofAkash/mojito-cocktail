@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DM_Serif_Text, Mona_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import { VisualEditing } from "next-sanity/visual-editing";
 import { draftMode } from "next/headers";
@@ -8,8 +9,22 @@ import { SanityLive } from "@/sanity/lib/live";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { getLocales } from "@/lib/locale";
+import { siteUrl } from "@/lib/site";
 import type { SiteSettingsData } from "@/sanity/types";
 import "../../globals.css";
+
+const monaSans = Mona_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans-loaded",
+});
+
+const dmSerif = DM_Serif_Text({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-serif-loaded",
+});
 
 type Params = { locale: string };
 
@@ -27,9 +42,11 @@ export async function generateMetadata({
     locales.map((l) => [l.code, l.isDefault ? "/" : `/${l.code}`]),
   );
 
+  const isDefault = locales.find((l) => l.code === locale)?.isDefault ?? false;
+
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-    alternates: { canonical: `/${locale}`, languages },
+    metadataBase: new URL(siteUrl()),
+    alternates: { canonical: isDefault ? "/" : `/${locale}`, languages },
   };
 }
 
@@ -54,7 +71,7 @@ export default async function LocaleLayout({
     : undefined;
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className={`${monaSans.variable} ${dmSerif.variable}`}>
       <body style={noise ? ({ "--noise": noise } as React.CSSProperties) : undefined}>
         {children}
         {isDraft && <SanityLive />}

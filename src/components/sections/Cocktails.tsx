@@ -31,8 +31,8 @@ export function Cocktails({
   return (
     <SectionMotion kind="cocktails" settings={data.animation ?? null}>
       <SectionWrapper id="cocktails" className="noisy">
-        <SanityImage image={data.leftLeaf ?? null} alt="" id="c-left-leaf" sizes="30vw" />
-        <SanityImage image={data.rightLeaf ?? null} alt="" id="c-right-leaf" sizes="30vw" />
+        <SanityImage image={data.leftLeaf ?? null} alt="" id="c-left-leaf" />
+        <SanityImage image={data.rightLeaf ?? null} alt="" id="c-right-leaf" />
 
         <div className="list">
           {data.lists?.map((list) => (
