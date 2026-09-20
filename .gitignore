@@ -1,4 +1,31 @@
-# Logs
+# dependencies
+node_modules
+.pnp
+.pnp.*
+
+# next.js
+.next/
+out/
+build
+dist
+dist-ssr
+
+# production / deploy
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# testing
+coverage
+
+# env — never commit real credentials; .env.example documents the shape
+.env
+.env*.local
+*.local
+
+# logs
 logs
 *.log
 npm-debug.log*
@@ -7,12 +34,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# editor / os
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,3 +44,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.vercel
+
+# Sanity CLI generated runtime
+.sanity
