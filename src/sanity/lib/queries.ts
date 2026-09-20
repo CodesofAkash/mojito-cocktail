@@ -24,6 +24,7 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
     noiseTexture ${IMAGE},
     navLinks[] { id, title },
     socials[] { name, url, icon ${IMAGE} },
+    builtBy { name, url, label, sameAs },
     defaultSeo { title, description, ogImage ${IMAGE} }
   }
 `);

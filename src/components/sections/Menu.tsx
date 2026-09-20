@@ -71,11 +71,23 @@ export function Menu({ data }: { data: MenuData }) {
 
       <div className="content">
         <div className="arrows">
-          <Button variant="ghost" size="none" className="text-left whitespace-normal min-w-0" onClick={() => goTo(index - 1)}>
+          <Button
+            variant="ghost"
+            size="none"
+            className="text-left whitespace-normal min-w-0"
+            aria-label={previous?.name ? `Previous drink: ${previous.name}` : "Previous drink"}
+            onClick={() => goTo(index - 1)}
+          >
             <span>{previous?.name}</span>
             <SanityImage image={data.prevIcon ?? null} alt="" className="size-10 shrink-0" />
           </Button>
-          <Button variant="ghost" size="none" className="text-right whitespace-normal min-w-0" onClick={() => goTo(index + 1)}>
+          <Button
+            variant="ghost"
+            size="none"
+            className="text-right whitespace-normal min-w-0"
+            aria-label={next?.name ? `Next drink: ${next.name}` : "Next drink"}
+            onClick={() => goTo(index + 1)}
+          >
             <span>{next?.name}</span>
             <SanityImage image={data.nextIcon ?? null} alt="" className="size-10 shrink-0" />
           </Button>

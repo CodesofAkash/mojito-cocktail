@@ -10,6 +10,7 @@ import {
 } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { SectionRenderer } from "@/components/SectionRenderer";
+import { getLocales } from "@/lib/locale";
 import { Navbar } from "@/components/Navbar";
 import { JsonLd } from "@/components/JsonLd";
 import type { PageData, PagePath, SiteSettingsData } from "@/sanity/types";
@@ -63,10 +64,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function HomePage({ params }: { params: Promise<Params> }) {
   const { locale } = await params;
 
-  const [{ data: page }, { data: settings }, { data: localeDoc }] = await Promise.all([
+  const [{ data: page }, { data: settings }, { data: localeDoc }, locales] = await Promise.all([
     sanityFetch({ query: PAGE_QUERY, params: { slug: "home", locale } }),
     sanityFetch({ query: SITE_SETTINGS_QUERY, params: { locale } }),
     sanityFetch({ query: LOCALE_BY_CODE_QUERY, params: { locale } }),
+    getLocales(),
   ]);
 
   // An unknown locale, or one with no content yet, is a genuine 404 rather
@@ -84,7 +86,7 @@ export default async function HomePage({ params }: { params: Promise<Params> }) 
 
   return (
     <>
-      <Navbar settings={typedSettings} locale={locale} />
+      <Navbar settings={typedSettings} locale={locale} locales={locales} />
       <main>
         {typedPage.sections?.map((section) => (
           <SectionRenderer
@@ -93,6 +95,7 @@ export default async function HomePage({ params }: { params: Promise<Params> }) 
             locale={locale}
             currency={currency}
             socials={socials}
+            builtBy={typedSettings.builtBy}
           />
         ))}
       </main>

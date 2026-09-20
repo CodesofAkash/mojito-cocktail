@@ -72,6 +72,36 @@ export const siteSettings = defineType({
       validation: (r) => r.required().min(1),
     }),
     defineField({
+      name: "builtBy",
+      title: "Built by",
+      type: "object",
+      description:
+        "Credit line in the footer, and the schema.org creator of the site. Note that a link between two sites you own does not build ranking authority — this is for humans and for attribution.",
+      fields: [
+        defineField({ name: "name", type: "string", validation: (r) => r.required() }),
+        defineField({
+          name: "url",
+          type: "url",
+          description: "Your portfolio.",
+          validation: (r) => r.required(),
+        }),
+        defineField({
+          name: "label",
+          type: "string",
+          description: "Wording of the credit, e.g. 'Designed and built by'.",
+          validation: (r) => r.required(),
+        }),
+        defineField({
+          name: "sameAs",
+          title: "Other profiles",
+          type: "array",
+          of: [{ type: "url" }],
+          description:
+            "GitHub, LinkedIn, X. Published as schema.org sameAs, which is how a search engine ties these identities to one person.",
+        }),
+      ],
+    }),
+    defineField({
       name: "defaultSeo",
       type: "seo",
       description: "Used for any page that has not set its own SEO.",

@@ -14,11 +14,13 @@ export function SectionRenderer({
   locale,
   currency,
   socials,
+  builtBy,
 }: {
   section: Section;
   locale: string;
   currency: string;
   socials: Social[];
+  builtBy?: { name?: string | null; url?: string | null; label?: string | null } | null;
 }) {
   switch (section._type) {
     case "heroSection":
@@ -32,7 +34,7 @@ export function SectionRenderer({
     case "menuSection":
       return <Menu data={section as unknown as MenuData} />;
     case "contactSection":
-      return <Contact data={section as unknown as ContactData} socials={socials} />;
+      return <Contact data={section as unknown as ContactData} socials={socials} builtBy={builtBy} />;
     default:
       // The Studio is ahead of the deploy: skip rather than crash the page.
       return null;

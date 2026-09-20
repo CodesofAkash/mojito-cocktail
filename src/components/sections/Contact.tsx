@@ -20,7 +20,17 @@ export type ContactData = {
 
 type Social = { name?: string | null; url?: string | null; icon?: SanityImageValue };
 
-export function Contact({ data, socials }: { data: ContactData; socials: Social[] }) {
+type BuiltBy = { name?: string | null; url?: string | null; label?: string | null } | null;
+
+export function Contact({
+  data,
+  socials,
+  builtBy,
+}: {
+  data: ContactData;
+  socials: Social[];
+  builtBy?: BuiltBy;
+}) {
   return (
     <SectionMotion kind="contact" settings={data.animation ?? null}>
       <SectionWrapper id="contact" as="footer">
@@ -77,6 +87,15 @@ export function Contact({ data, socials }: { data: ContactData; socials: Social[
             </div>
           </div>
         </div>
+
+        {builtBy?.url && builtBy.name && (
+          <p className="built-by">
+            {builtBy.label}{" "}
+            <a href={builtBy.url} target="_blank" rel="noopener author">
+              {builtBy.name}
+            </a>
+          </p>
+        )}
       </SectionWrapper>
     </SectionMotion>
   );
