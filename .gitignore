@@ -46,3 +46,6 @@ lerna-debug.log*
 *.sw?
 
 .vercel
+
+# Sanity CLI generated runtime
+.sanity
