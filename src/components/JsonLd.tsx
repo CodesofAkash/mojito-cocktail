@@ -6,7 +6,10 @@ export function JsonLd({
   locale,
 }: {
   page: { sections?: Section[] | null } | null;
-  settings: { name?: string | null } | null;
+  settings: {
+    name?: string | null;
+    builtBy?: { name?: string | null; url?: string | null; sameAs?: string[] | null } | null;
+  } | null;
   locale: string;
 }) {
   const sections = page?.sections ?? [];
@@ -27,6 +30,14 @@ export function JsonLd({
     telephone: contact?.phone,
     email: contact?.email,
     inLanguage: locale,
+    creator: settings?.builtBy?.name
+      ? {
+          "@type": "Person",
+          name: settings.builtBy.name,
+          url: settings.builtBy.url ?? undefined,
+          sameAs: settings.builtBy.sameAs?.length ? settings.builtBy.sameAs : undefined,
+        }
+      : undefined,
     openingHoursSpecification: contact?.openingHours?.map((slot) => ({
       "@type": "OpeningHoursSpecification",
       description: `${slot.day}: ${slot.time}`,

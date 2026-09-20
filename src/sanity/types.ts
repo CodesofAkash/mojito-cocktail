@@ -22,6 +22,12 @@ export type SiteSettingsData = {
   noiseTexture?: SanityImageValue;
   navLinks?: Array<{ id?: string | null; title?: string | null }> | null;
   socials?: Array<{ name?: string | null; url?: string | null; icon?: SanityImageValue }> | null;
+  builtBy?: {
+    name?: string | null;
+    url?: string | null;
+    label?: string | null;
+    sameAs?: string[] | null;
+  } | null;
   defaultSeo?: SeoData;
 } | null;
 

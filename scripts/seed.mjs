@@ -263,6 +263,12 @@ async function main() {
         { _key: "s1", name: "Instagram", url: "https://www.instagram.com/codesofakash/", icon: insta },
         { _key: "s2", name: "X (Twitter)", url: "https://x.com/CodesOfAkash", icon: x },
       ],
+      builtBy: {
+        name: "Akash Sharma",
+        url: "https://codesofakash.vercel.app",
+        label: m.code === "de-DE" ? "Gestaltet und gebaut von" : "Designed and built by",
+        sameAs: ["https://github.com/CodesofAkash", "https://x.com/CodesOfAkash"],
+      },
       defaultSeo: {
         _type: "seo",
         title: `Velvet Pour | ${m.code === "de-DE" ? "Cocktailbar in" : "Premium Cocktails & Mocktails Bar in"} ${m.city}`,

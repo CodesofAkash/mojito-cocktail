@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { SanityImage, type SanityImageValue } from "./SanityImage";
 import { NavbarMotion } from "./motion/NavbarMotion";
+import { LocaleSwitcher } from "./LocaleSwitcher";
+import type { Locale } from "@/lib/locale";
 
 type Settings = {
   name?: string | null;
@@ -8,7 +10,15 @@ type Settings = {
   navLinks?: Array<{ id?: string | null; title?: string | null }> | null;
 } | null;
 
-export function Navbar({ settings, locale }: { settings: Settings; locale: string }) {
+export function Navbar({
+  settings,
+  locale,
+  locales,
+}: {
+  settings: Settings;
+  locale: string;
+  locales: Locale[];
+}) {
   return (
     <NavbarMotion>
       <nav>
@@ -25,6 +35,8 @@ export function Navbar({ settings, locale }: { settings: Settings; locale: strin
               </li>
             ))}
           </ul>
+
+          <LocaleSwitcher locales={locales} current={locale} />
         </div>
       </nav>
     </NavbarMotion>
