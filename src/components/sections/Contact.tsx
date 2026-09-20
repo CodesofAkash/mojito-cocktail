@@ -24,8 +24,8 @@ export function Contact({ data, socials }: { data: ContactData; socials: Social[
   return (
     <SectionMotion kind="contact" settings={data.animation ?? null}>
       <SectionWrapper id="contact" as="footer">
-        <SanityImage image={data.rightLeaf ?? null} alt="" id="f-right-leaf" sizes="25vw" />
-        <SanityImage image={data.leftLeaf ?? null} alt="" id="f-left-leaf" sizes="25vw" />
+        <SanityImage image={data.rightLeaf ?? null} alt="" id="f-right-leaf" />
+        <SanityImage image={data.leftLeaf ?? null} alt="" id="f-left-leaf" />
 
         <div className="content">
           <h2>{data.heading}</h2>

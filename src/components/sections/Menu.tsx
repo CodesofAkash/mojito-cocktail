@@ -47,8 +47,8 @@ export function Menu({ data }: { data: MenuData }) {
 
   return (
     <SectionWrapper id="menu" aria-labelledby="menu-heading">
-      <SanityImage image={data.leftLeaf ?? null} alt="" id="m-left-leaf" sizes="25vw" />
-      <SanityImage image={data.rightLeaf ?? null} alt="" id="m-right-leaf" sizes="25vw" />
+      <SanityImage image={data.leftLeaf ?? null} alt="" id="m-left-leaf" />
+      <SanityImage image={data.rightLeaf ?? null} alt="" id="m-right-leaf" />
 
       <h2 id="menu-heading" className="sr-only">
         {data.heading}
