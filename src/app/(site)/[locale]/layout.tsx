@@ -72,6 +72,17 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={`${monaSans.variable} ${dmSerif.variable}`}>
+      <head>
+        {/* Declared only in @font-face, so the browser would not fetch it
+            until the hero h1 renders — the tail of the critical path. */}
+        <link
+          rel="preload"
+          href="/fonts/modern-negra.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body style={noise ? ({ "--noise": noise } as React.CSSProperties) : undefined}>
         {children}
         {isDraft && <SanityLive />}
