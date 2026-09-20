@@ -51,7 +51,15 @@ export function About({ data }: { data: AboutData }) {
           {images.slice(0, 3).map((image, i) => (
             <div key={image?.ref ?? i} className={i === 1 ? "md:col-span-6 js-stagger" : "md:col-span-3 js-stagger"}>
               <div className="noisy" />
-              <SanityImage image={image} alt="" sizes="(max-width: 768px) 100vw, 33vw" />
+              <SanityImage
+                image={image}
+                alt=""
+                sizes={
+                  i === 1
+                    ? "(max-width: 1279px) calc(100vw - 2.5rem), 50vw"
+                    : "(max-width: 1279px) calc(100vw - 2.5rem), 25vw"
+                }
+              />
             </div>
           ))}
         </div>
@@ -60,7 +68,15 @@ export function About({ data }: { data: AboutData }) {
           {images.slice(3, 5).map((image, i) => (
             <div key={image?.ref ?? i} className={i === 0 ? "md:col-span-8 js-stagger" : "md:col-span-4 js-stagger"}>
               <div className="noisy" />
-              <SanityImage image={image} alt="" sizes="(max-width: 768px) 100vw, 50vw" />
+              <SanityImage
+                image={image}
+                alt=""
+                sizes={
+                  i === 0
+                    ? "(max-width: 1279px) calc(100vw - 2.5rem), 66vw"
+                    : "(max-width: 1279px) calc(100vw - 2.5rem), 33vw"
+                }
+              />
             </div>
           ))}
         </div>

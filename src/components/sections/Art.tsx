@@ -24,7 +24,7 @@ export type ArtData = {
 export function Art({ data }: { data: ArtData }) {
   const maskRef = data.maskShape?.ref;
   const maskStyle = maskRef
-    ? ({ "--mask": `url(${urlFor({ asset: { _ref: maskRef } } as never).width(900).format("webp").url()})` } as CSSProperties)
+    ? ({ "--mask": `url(${urlFor({ asset: { _ref: maskRef } } as never).width(384).quality(55).format("webp").url()})` } as CSSProperties)
     : undefined;
   const featureList = data.featureList ?? [];
   const goodList = data.goodList ?? [];
