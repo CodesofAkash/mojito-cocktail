@@ -22,8 +22,10 @@ export function SectionMotion({ kind, settings, children }: Props) {
 
   const skip = !a.enabled || reduced || (a.disableOnMobile && isMobile);
   const near = useNearViewport(scope);
-  // Desktop opens immediately; a phone waits for the first scroll.
-  const gated = useInteractionGate(isMobile);
+  // Desktop opens immediately; a phone waits for the first scroll. Assume a
+  // phone until the media query can be read, or hydration's optimistic
+  // "desktop" opens the gate and fires the import before the correction lands.
+  const gated = useInteractionGate(useIsMobile(767, true));
   const [mod, setMod] = useState<typeof import("./gsap-init") | null>(null);
 
   useEffect(() => {
