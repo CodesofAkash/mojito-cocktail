@@ -213,8 +213,13 @@ body {
         }
     }
 
-    video {
+    video,
+    .video-poster {
         @apply w-full max-w-[var(--shell-max)] md:h-[min(80%,50rem)] h-1/2 absolute bottom-0 inset-x-0 mx-auto md:object-contain object-bottom object-cover;
+    }
+
+    video {
+        @apply transition-opacity duration-300;
     }
 
     #cocktails {

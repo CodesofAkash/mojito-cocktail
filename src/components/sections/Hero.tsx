@@ -21,21 +21,10 @@ export type HeroData = {
 export function Hero({ data }: { data: HeroData }) {
   const subtitleWords = data.subtitle?.split(" ") ?? [];
 
-  // The poster is the LCP element on mobile, where the video never loads.
-  // Served through our own optimizer rather than cdn.sanity.io, it reuses the
-  // connection that already fetched the document instead of paying a cold
-  // DNS + TCP + TLS handshake — measured at 780 ms of LCP load delay — and
-  // AVIF takes it from 6,994 to 5,681 bytes at the same 960px source width.
-  // q=75 is not arbitrary: Next 16 rejects any quality outside images.qualities.
-  const posterUrl = data.poster?.url
-    ? `/_next/image?url=${encodeURIComponent(data.poster.url)}&w=1024&q=75`
-    : null;
+  const posterUrl = data.poster?.url ?? null;
 
   return (
     <SectionMotion kind="hero" settings={data.animation ?? null}>
-      {posterUrl && (
-        <link rel="preload" as="image" href={posterUrl} fetchPriority="high" />
-      )}
       <HeroVideo src={data.videoUrl ?? null} poster={posterUrl} />
 
       <SectionWrapper id="hero" className="noisy">
