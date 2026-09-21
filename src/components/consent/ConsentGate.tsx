@@ -70,10 +70,20 @@ export function ConsentGate({
                 Privacy policy
               </a>
             )}
-            <Button variant="ghost" size="none" onClick={() => decide("denied")}>
+            <Button
+              variant="ghost"
+              size="none"
+              className="cookie-banner__btn text-white/70 border-white/25 hover:border-white/70 hover:text-white"
+              onClick={() => decide("denied")}
+            >
               {copy?.declineLabel}
             </Button>
-            <Button variant="ghost" size="none" data-variant="accept" onClick={() => decide("granted")}>
+            <Button
+              variant="ghost"
+              size="none"
+              className="cookie-banner__btn font-medium text-white border-white/60 hover:border-white hover:bg-white/10"
+              onClick={() => decide("granted")}
+            >
               {copy?.acceptLabel}
             </Button>
           </div>

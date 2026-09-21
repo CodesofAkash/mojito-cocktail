@@ -505,13 +505,10 @@ body {
             @apply text-sm text-white/60 underline underline-offset-4 hover:text-white;
         }
 
-        button {
-            @apply text-sm px-4 py-2 rounded-full border border-white/30 text-white
-                   hover:bg-white/10 transition-colors;
-
-            &[data-variant="accept"] {
-                @apply bg-white text-black border-white hover:bg-white/90;
-            }
+        /* Colour lives on the component, not here: a Tailwind utility on the
+           element always beats an @apply rule in a component layer. */
+        .cookie-banner__btn {
+            @apply text-sm px-4 py-2 rounded-full border transition-colors duration-200;
         }
     }
 }
