@@ -11,6 +11,7 @@ const resources = {
     settings: "Site settings",
     locales: "Locales",
     translations: "Translation links",
+    global: "Global configuration",
     content: "Content",
   },
   "de-DE": {
@@ -18,6 +19,7 @@ const resources = {
     settings: "Website-Einstellungen",
     locales: "Sprachen",
     translations: "Übersetzungs-Verknüpfungen",
+    global: "Globale Konfiguration",
     content: "Inhalt",
   },
 } as const;

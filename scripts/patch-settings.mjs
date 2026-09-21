@@ -1,7 +1,7 @@
 /**
- * Fills the settings fields added after the original seed, without touching
- * anything an editor has since changed. `setIfMissing` is the whole point:
- * re-running this is safe, and it will never overwrite Studio edits.
+ * Fills settings fields added after the original seed, and creates the global
+ * configuration singleton. `setIfMissing` is the point: re-running this is
+ * safe and will never overwrite a Studio edit.
  *
  *   node scripts/patch-settings.mjs
  */
@@ -29,12 +29,10 @@ const COPY = {
       linkLabel: "Back to the bar",
     },
     maintenance: {
-      enabled: false,
       heading: "Back shortly",
       message: "We are polishing the glassware. Please try again in a little while.",
     },
     cookieConsent: {
-      enabled: true,
       message:
         "We use cookies to understand how this site is used. Nothing is collected until you agree.",
       acceptLabel: "Accept",
@@ -48,12 +46,10 @@ const COPY = {
       linkLabel: "Back to the bar",
     },
     maintenance: {
-      enabled: false,
       heading: "Back shortly",
       message: "We are polishing the glassware. Please try again in a little while.",
     },
     cookieConsent: {
-      enabled: true,
       message:
         "We use cookies to understand how this site is used. Nothing is collected until you agree.",
       acceptLabel: "Accept",
@@ -67,12 +63,10 @@ const COPY = {
       linkLabel: "Zurück zur Bar",
     },
     maintenance: {
-      enabled: false,
       heading: "Gleich zurück",
       message: "Wir polieren gerade die Gläser. Bitte versuchen Sie es in Kürze erneut.",
     },
     cookieConsent: {
-      enabled: true,
       message:
         "Wir verwenden Cookies, um die Nutzung dieser Website zu verstehen. Es wird nichts erfasst, bevor Sie zustimmen.",
       acceptLabel: "Zustimmen",
@@ -82,8 +76,6 @@ const COPY = {
 };
 
 async function main() {
-  // The hero poster doubles as the share card: it is the image the site is
-  // already recognised by, and it is the right shape.
   const poster = await client.fetch(
     `*[_type == "sanity.imageAsset" && originalFilename match "hero-poster*"][0]._id`,
   );
@@ -91,22 +83,37 @@ async function main() {
 
   const tx = client.transaction();
 
+  // Switches and third-party IDs cannot differ per market, so they live in one
+  // document rather than being duplicated across the three locales.
+  tx.createIfNotExists({
+    _id: "globalConfig",
+    _type: "globalConfig",
+    consentEnabled: true,
+    maintenanceEnabled: false,
+    analytics: {},
+    postHog: { apiHost: "https://eu.i.posthog.com", sessionReplay: false },
+    verification: {},
+    scripts: { requiresConsent: true },
+  });
+
   for (const [code, copy] of Object.entries(COPY)) {
     tx.patch(`siteSettings-${code}`, (p) =>
-      p.setIfMissing({
-        notFound: copy.notFound,
-        maintenance: copy.maintenance,
-        cookieConsent: copy.cookieConsent,
-        analytics: {},
-        scripts: { requiresConsent: true },
-        "defaultSeo.ogImage": { _type: "image", asset: { _type: "reference", _ref: poster } },
-      }),
+      p
+        .setIfMissing({
+          notFound: copy.notFound,
+          maintenance: copy.maintenance,
+          cookieConsent: copy.cookieConsent,
+          "defaultSeo.ogImage": { _type: "image", asset: { _type: "reference", _ref: poster } },
+        })
+        // These moved to globalConfig; leaving them behind means two places
+        // disagree about whether the site is down.
+        .unset(["analytics", "scripts", "maintenance.enabled", "cookieConsent.enabled"]),
     );
   }
 
   await tx.commit();
-  console.log("Patched 3 siteSettings documents: 404 copy, maintenance, consent, OG image.");
-  console.log("Analytics IDs left empty on purpose — nothing loads until you fill them in.");
+  console.log("globalConfig created; 3 siteSettings patched and de-duplicated.");
+  console.log("Analytics and PostHog keys left empty — nothing loads until you fill them in.");
 }
 
 main().catch((error) => {

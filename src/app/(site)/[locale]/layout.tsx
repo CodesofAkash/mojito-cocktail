@@ -2,15 +2,16 @@ import type { Metadata } from "next";
 import { DM_Serif_Text, Mona_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import { VisualEditing } from "next-sanity/visual-editing";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { draftMode } from "next/headers";
 
 import { sanityFetch } from "@/sanity/lib/live";
 import { SanityLive } from "@/sanity/lib/live";
-import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import { GLOBAL_CONFIG_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { getLocales } from "@/lib/locale";
 import { siteUrl } from "@/lib/site";
-import type { SiteSettingsData } from "@/sanity/types";
+import type { GlobalConfigData, SiteSettingsData } from "@/sanity/types";
 import "../../globals.css";
 
 const monaSans = Mona_Sans({
@@ -45,9 +46,16 @@ export async function generateMetadata({
 
   const isDefault = locales.find((l) => l.code === locale)?.isDefault ?? false;
 
+  const { data: config } = await sanityFetch({ query: GLOBAL_CONFIG_QUERY, stega: false });
+  const verification = (config as GlobalConfigData)?.verification;
+
   return {
     metadataBase: new URL(siteUrl()),
     alternates: { canonical: isDefault ? "/" : `/${locale}`, languages },
+    verification: {
+      google: verification?.google ?? undefined,
+      other: verification?.bing ? { "msvalidate.01": verification.bing } : undefined,
+    },
   };
 }
 
@@ -86,6 +94,8 @@ export default async function LocaleLayout({
       </head>
       <body style={noise ? ({ "--noise": noise } as React.CSSProperties) : undefined}>
         {children}
+        {/* Cookieless, so it needs no consent and measures every visitor. */}
+        <SpeedInsights />
         {isDraft && <SanityLive />}
         {isDraft && <VisualEditing />}
       </body>

@@ -1,8 +1,7 @@
 export type MaintenanceData = {
-  enabled?: boolean | null;
   heading?: string | null;
   message?: string | null;
-} | null;
+} | null | undefined;
 
 export function Maintenance({ data }: { data: MaintenanceData }) {
   return (

@@ -1,11 +1,13 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Analytics, type AnalyticsIds } from "./Analytics";
 import { InjectedScripts } from "./InjectedScripts";
+import { PostHog, type PostHogConfig } from "./PostHog";
+import { SectionTracking } from "./SectionTracking";
 import { useConsent } from "./useConsent";
 
 type Copy = {
-  enabled?: boolean | null;
   message?: string | null;
   acceptLabel?: string | null;
   declineLabel?: string | null;
@@ -20,33 +22,46 @@ type Scripts = {
 
 export function ConsentGate({
   ids,
+  postHog,
   scripts,
   copy,
+  consentEnabled,
+  locale,
 }: {
   ids: AnalyticsIds;
+  postHog: PostHogConfig;
   scripts: Scripts;
   copy: Copy;
+  consentEnabled: boolean;
+  locale: string;
 }) {
   const { state, decide } = useConsent();
 
   const hasTags = Boolean(
     ids?.googleAnalyticsId || ids?.googleTagManagerId || ids?.facebookPixelId,
   );
+  const hasPostHog = Boolean(postHog?.projectApiKey);
   const hasScripts = Boolean(scripts?.head || scripts?.bodyEnd);
-  const asking = copy?.enabled !== false;
 
-  // With no banner configured, consent has not been given and cannot be
-  // assumed — so nothing that sets a cookie is allowed to load at all.
-  const granted = asking ? state === "granted" : false;
+  // Consent not being asked for is not consent. Nothing that sets a cookie
+  // may load, because silence cannot be read as agreement.
+  const granted = consentEnabled ? state === "granted" : false;
   const scriptsAllowed = scripts?.requiresConsent === false || granted;
+  const anythingToConsentTo = hasTags || hasPostHog || hasScripts;
 
   return (
     <>
       {granted && hasTags && <Analytics ids={ids} />}
+      {granted && hasPostHog && (
+        <>
+          <PostHog config={postHog} locale={locale} />
+          <SectionTracking />
+        </>
+      )}
       {scriptsAllowed && <InjectedScripts html={scripts?.head ?? null} target="head" />}
       {scriptsAllowed && <InjectedScripts html={scripts?.bodyEnd ?? null} target="bodyEnd" />}
 
-      {asking && state === "unset" && (hasTags || hasScripts) && (
+      {consentEnabled && state === "unset" && anythingToConsentTo && (
         <div className="cookie-banner" role="dialog" aria-label="Cookie consent">
           <p>{copy?.message}</p>
           <div className="cookie-banner__actions">
@@ -55,12 +70,12 @@ export function ConsentGate({
                 Privacy policy
               </a>
             )}
-            <button type="button" onClick={() => decide("denied")}>
+            <Button variant="ghost" size="none" onClick={() => decide("denied")}>
               {copy?.declineLabel}
-            </button>
-            <button type="button" data-variant="accept" onClick={() => decide("granted")}>
+            </Button>
+            <Button variant="ghost" size="none" data-variant="accept" onClick={() => decide("granted")}>
               {copy?.acceptLabel}
-            </button>
+            </Button>
           </div>
         </div>
       )}
