@@ -7,6 +7,8 @@ import { getLocales } from "@/lib/locale";
 import type { SiteSettingsData } from "@/sanity/types";
 import "./globals.css";
 
+export const revalidate = 60;
+
 const monaSans = Mona_Sans({ subsets: ["latin"], display: "swap", variable: "--font-sans-loaded" });
 const dmSerif = DM_Serif_Text({
   subsets: ["latin"],

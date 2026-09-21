@@ -129,7 +129,7 @@ export function HeroVideo({ src, poster }: Props) {
   if (!src) return null;
 
   return (
-    <div ref={trackRef} className="video-track absolute inset-x-0 top-0 z-0 pointer-events-none">
+    <div ref={trackRef} className="video-track absolute inset-x-0 top-0 z-0 min-h-dvh pointer-events-none">
       <div className="video sticky top-0 h-dvh">
         <video
           ref={videoRef}

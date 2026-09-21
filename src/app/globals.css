@@ -490,8 +490,11 @@ body {
 
 @layer components {
     .cookie-banner {
+        /* No backdrop-filter: it makes the compositor re-render the hero behind
+           it, which showed up as 2 s of LCP render delay for no visual gain
+           over a 96%-opaque background. */
         @apply fixed bottom-0 inset-x-0 z-50 flex flex-col md:flex-row md:items-center gap-4
-               px-5 py-4 bg-black/90 backdrop-blur-sm border-t border-white/15;
+               px-5 py-4 bg-black border-t border-white/15;
 
         p {
             @apply text-sm text-white/80 flex-1;
