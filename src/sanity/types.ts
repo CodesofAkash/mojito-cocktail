@@ -29,6 +29,33 @@ export type SiteSettingsData = {
     sameAs?: string[] | null;
   } | null;
   defaultSeo?: SeoData;
+  analytics?: {
+    googleAnalyticsId?: string | null;
+    googleTagManagerId?: string | null;
+    facebookPixelId?: string | null;
+  } | null;
+  scripts?: {
+    head?: string | null;
+    bodyEnd?: string | null;
+    requiresConsent?: boolean | null;
+  } | null;
+  cookieConsent?: {
+    enabled?: boolean | null;
+    message?: string | null;
+    acceptLabel?: string | null;
+    declineLabel?: string | null;
+    policyUrl?: string | null;
+  } | null;
+  notFound?: {
+    heading?: string | null;
+    message?: string | null;
+    linkLabel?: string | null;
+  } | null;
+  maintenance?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    message?: string | null;
+  } | null;
 } | null;
 
 export type SectionData = { _key: string; _type: string } & Record<string, unknown>;

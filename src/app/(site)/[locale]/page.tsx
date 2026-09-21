@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
 
 import { sanityFetch } from "@/sanity/lib/live";
 import {
@@ -13,6 +14,8 @@ import { SectionRenderer } from "@/components/SectionRenderer";
 import { getLocales } from "@/lib/locale";
 import { Navbar } from "@/components/Navbar";
 import { JsonLd } from "@/components/JsonLd";
+import { Maintenance } from "@/components/Maintenance";
+import { ConsentGate } from "@/components/consent/ConsentGate";
 import type { PageData, PagePath, SiteSettingsData } from "@/sanity/types";
 
 type Params = { locale: string };
@@ -81,6 +84,13 @@ export default async function HomePage({ params }: { params: Promise<Params> }) 
   // no currency is a content error, and 404 makes it visible immediately.
   if (!typedPage || !typedSettings || !locale_?.currency) notFound();
 
+  // AK-SAN-031 — a draft session bypasses maintenance, so an editor can still
+  // preview the content they are holding the site to fix.
+  const { isEnabled: isDraft } = await draftMode();
+  if (typedSettings.maintenance?.enabled && !isDraft) {
+    return <Maintenance data={typedSettings.maintenance} />;
+  }
+
   const currency = locale_.currency;
   const socials = typedSettings.socials ?? [];
 
@@ -100,6 +110,11 @@ export default async function HomePage({ params }: { params: Promise<Params> }) 
         ))}
       </main>
       <JsonLd page={typedPage} settings={typedSettings} locale={locale} />
+      <ConsentGate
+        ids={typedSettings.analytics ?? null}
+        scripts={typedSettings.scripts ?? null}
+        copy={typedSettings.cookieConsent ?? null}
+      />
     </>
   );
 }

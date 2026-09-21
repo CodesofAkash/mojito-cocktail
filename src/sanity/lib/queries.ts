@@ -25,7 +25,12 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
     navLinks[] { id, title },
     socials[] { name, url, icon ${IMAGE} },
     builtBy { name, url, label, sameAs },
-    defaultSeo { title, description, ogImage ${IMAGE} }
+    defaultSeo { title, description, ogImage ${IMAGE} },
+    analytics { googleAnalyticsId, googleTagManagerId, facebookPixelId },
+    scripts { head, bodyEnd, requiresConsent },
+    cookieConsent { enabled, message, acceptLabel, declineLabel, policyUrl },
+    notFound { heading, message, linkLabel },
+    maintenance { enabled, heading, message }
   }
 `);
 

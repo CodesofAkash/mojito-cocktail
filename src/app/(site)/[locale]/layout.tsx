@@ -36,11 +36,12 @@ export async function generateMetadata({
   const { locale } = await params;
   const locales = await getLocales();
 
-  // hreflang tells search engines these pages are translations of one another.
-  // It only works with valid BCP-47 codes, which is why the Studio enforces them.
-  const languages = Object.fromEntries(
-    locales.map((l) => [l.code, l.isDefault ? "/" : `/${l.code}`]),
-  );
+  // hreflang ties these pages together as translations; x-default names the one
+  // served to a visitor matching none (AK-I18N-008). Both need valid BCP-47.
+  const languages = {
+    ...Object.fromEntries(locales.map((l) => [l.code, l.isDefault ? "/" : `/${l.code}`])),
+    "x-default": "/",
+  };
 
   const isDefault = locales.find((l) => l.code === locale)?.isDefault ?? false;
 
