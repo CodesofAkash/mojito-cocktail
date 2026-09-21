@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DM_Serif_Text, Mona_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import { VisualEditing } from "next-sanity/visual-editing";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SpeedInsights } from "@/components/SpeedInsights";
 import { draftMode } from "next/headers";
 
 import { sanityFetch } from "@/sanity/lib/live";
