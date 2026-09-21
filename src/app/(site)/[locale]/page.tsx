@@ -40,6 +40,10 @@ export async function generateStaticParams() {
 
 export const dynamicParams = true;
 
+// Without this the page is built once and a publish never reaches the site.
+// Still cache-served, so it costs nothing; the rebuild happens behind it.
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale } = await params;
   const [{ data: page }, { data: settings }] = await Promise.all([
