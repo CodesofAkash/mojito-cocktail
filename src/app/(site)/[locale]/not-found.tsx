@@ -5,7 +5,6 @@ import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { getLocales } from "@/lib/locale";
 import type { SiteSettingsData } from "@/sanity/types";
 
-export const revalidate = 60;
 
 // A 404 is reached with no valid route params, so the locale that produced it
 // is not knowable here — the default locale's copy is the only sound choice.

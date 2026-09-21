@@ -96,7 +96,9 @@ export default async function LocaleLayout({
         {children}
         {/* Cookieless, so it needs no consent and measures every visitor. */}
         <SpeedInsights />
-        {isDraft && <SanityLive />}
+        {/* Not draft-gated: defineLive only configures revalidation — nothing
+            revalidates until the next deploy unless this is actually rendered. */}
+        <SanityLive />
         {isDraft && <VisualEditing />}
       </body>
     </html>
