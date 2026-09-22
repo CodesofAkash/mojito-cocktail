@@ -1,4 +1,4 @@
-import { Badge, Box, Card, Flex, Heading, Spinner, Stack, Text } from "@sanity/ui";
+import { Badge, Box, Button, Card, Flex, Heading, Spinner, Stack, Text } from "@sanity/ui";
 import { useEffect, useState } from "react";
 
 type Metric = { p75: number | null; samples: number };
@@ -88,21 +88,27 @@ function Bar({ value, max }: { value: number; max: number }) {
 export function AnalyticsTool() {
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // The numbers are fetched once on mount, so without this an editor sees a
+  // stale count after visiting the site and wonders whether it is recording.
+  const [nonce, setNonce] = useState(0);
 
   useEffect(() => {
     let alive = true;
-    fetch("/api/analytics")
+    fetch(`/api/analytics?r=${nonce}`)
       .then(async (r) => {
         const json = await r.json();
         if (!alive) return;
         if (!r.ok) setError(json.error ?? `Request failed (${r.status})`);
-        else setData(json as Data);
+        else {
+          setError(null);
+          setData(json as Data);
+        }
       })
       .catch((e) => alive && setError(String(e)));
     return () => {
       alive = false;
     };
-  }, []);
+  }, [nonce]);
 
   if (error) {
     return (
@@ -135,12 +141,15 @@ export function AnalyticsTool() {
   return (
     <Box padding={5}>
       <Stack gap={5}>
-        <Stack gap={2}>
-          <Heading size={3}>Analytics</Heading>
-          <Text muted size={1}>
-            Last {data.windowDays} days · {data.totals.people} visitors · {data.totals.views} views
-          </Text>
-        </Stack>
+        <Flex align="flex-start" justify="space-between" gap={3}>
+          <Stack gap={2}>
+            <Heading size={3}>Analytics</Heading>
+            <Text muted size={1}>
+              Last {data.windowDays} days · {data.totals.people} visitors · {data.totals.views} views
+            </Text>
+          </Stack>
+          <Button mode="ghost" text="Refresh" onClick={() => setNonce((n) => n + 1)} />
+        </Flex>
 
         <Card padding={4} radius={2} shadow={1}>
           <Stack gap={4}>
