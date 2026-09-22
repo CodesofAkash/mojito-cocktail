@@ -18,7 +18,11 @@ const getServerSnapshot = () => false;
 export const useReducedMotion = () =>
   useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-export function useIsMobile(maxWidth = 767) {
+// `serverValue` is what the hydration render sees, before a media query can be
+// read. It defaults to false — treat the visit as desktop and correct after —
+// but a caller that would rather over-restrict than under-restrict on a phone
+// can pass true.
+export function useIsMobile(maxWidth = 767, serverValue = false) {
   const query = `(max-width: ${maxWidth}px)`;
   return useSyncExternalStore(
     (cb) => {
@@ -28,6 +32,6 @@ export function useIsMobile(maxWidth = 767) {
       return () => mq.removeEventListener("change", cb);
     },
     () => window.matchMedia(query).matches,
-    () => false,
+    () => serverValue,
   );
 }

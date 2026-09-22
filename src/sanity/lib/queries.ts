@@ -25,7 +25,10 @@ export const SITE_SETTINGS_QUERY = defineQuery(`
     navLinks[] { id, title },
     socials[] { name, url, icon ${IMAGE} },
     builtBy { name, url, label, sameAs },
-    defaultSeo { title, description, ogImage ${IMAGE} }
+    defaultSeo { title, description, ogImage ${IMAGE} },
+    cookieConsent { message, acceptLabel, declineLabel, policyUrl },
+    notFound { heading, message, linkLabel },
+    maintenance { heading, message }
   }
 `);
 
@@ -91,5 +94,16 @@ export const PAGE_QUERY = defineQuery(`
 export const ALL_PAGE_PATHS_QUERY = defineQuery(`
   *[_type == "page" && defined(slug.current) && defined(language)] {
     "slug": slug.current, language
+  }
+`);
+
+export const GLOBAL_CONFIG_QUERY = defineQuery(`
+  *[_type == "globalConfig" && _id == "globalConfig"][0] {
+    analytics { googleAnalyticsId, googleTagManagerId, facebookPixelId },
+    postHog { projectApiKey, apiHost, projectId, sessionReplay },
+    verification { google, bing },
+    scripts { head, bodyEnd, requiresConsent },
+    consentEnabled,
+    maintenanceEnabled
   }
 `);

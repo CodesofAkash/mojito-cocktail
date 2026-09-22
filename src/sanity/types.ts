@@ -29,6 +29,21 @@ export type SiteSettingsData = {
     sameAs?: string[] | null;
   } | null;
   defaultSeo?: SeoData;
+  cookieConsent?: {
+    message?: string | null;
+    acceptLabel?: string | null;
+    declineLabel?: string | null;
+    policyUrl?: string | null;
+  } | null;
+  notFound?: {
+    heading?: string | null;
+    message?: string | null;
+    linkLabel?: string | null;
+  } | null;
+  maintenance?: {
+    heading?: string | null;
+    message?: string | null;
+  } | null;
 } | null;
 
 export type SectionData = { _key: string; _type: string } & Record<string, unknown>;
@@ -42,3 +57,25 @@ export type PageData = {
 } | null;
 
 export type PagePath = { slug: string | null; language: string | null };
+
+export type GlobalConfigData = {
+  analytics?: {
+    googleAnalyticsId?: string | null;
+    googleTagManagerId?: string | null;
+    facebookPixelId?: string | null;
+  } | null;
+  postHog?: {
+    projectApiKey?: string | null;
+    apiHost?: string | null;
+    projectId?: string | null;
+    sessionReplay?: boolean | null;
+  } | null;
+  verification?: { google?: string | null; bing?: string | null } | null;
+  scripts?: {
+    head?: string | null;
+    bodyEnd?: string | null;
+    requiresConsent?: boolean | null;
+  } | null;
+  consentEnabled?: boolean | null;
+  maintenanceEnabled?: boolean | null;
+} | null;

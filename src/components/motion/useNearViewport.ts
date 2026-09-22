@@ -14,12 +14,10 @@ export function useNearViewport(ref: RefObject<HTMLElement | null>, rootMargin =
     const node = ref.current;
     if (!node || near) return;
 
-    // display:contents has no layout box, so IntersectionObserver would get a
-    // zero rect and never fire. Observe the section itself.
-    const target =
-      getComputedStyle(node).display === "contents" && node.firstElementChild instanceof HTMLElement
-        ? node.firstElementChild
-        : node;
+    // The wrapper is display:contents, so it has no layout box and the
+    // observer would read a zero rect and never fire. Observe the section.
+    // Asking getComputedStyle here would force a style recalc per section.
+    const target = node.firstElementChild instanceof HTMLElement ? node.firstElementChild : node;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
