@@ -8,6 +8,7 @@ import { apiVersion, dataset, projectId, studioUrl } from "@/sanity/env";
 import { schemaTypes } from "@/sanity/schemas";
 import { structure } from "@/sanity/structure";
 import { StudioNavbar } from "@/sanity/components/StudioNavbar";
+import { AnalyticsTool } from "@/sanity/components/AnalyticsTool";
 import { studioBundles } from "@/sanity/i18n";
 
 export default defineConfig({
@@ -19,6 +20,12 @@ export default defineConfig({
   schema: { types: schemaTypes },
   studio: { components: { navbar: StudioNavbar } },
   i18n: { bundles: studioBundles },
+  tools: (prev) => [
+    ...prev,
+    // Reads aggregates from PostHog through our own API route, so the editor
+    // sees how the page performs without leaving the Studio or holding a key.
+    { name: "analytics", title: "Analytics", component: AnalyticsTool },
+  ],
   plugins: [
     // Makes German available for the Studio's own interface; the switcher
     // selects it when the chosen content locale matches.

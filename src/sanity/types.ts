@@ -67,6 +67,7 @@ export type GlobalConfigData = {
   postHog?: {
     projectApiKey?: string | null;
     apiHost?: string | null;
+    projectId?: string | null;
     sessionReplay?: boolean | null;
   } | null;
   verification?: { google?: string | null; bing?: string | null } | null;

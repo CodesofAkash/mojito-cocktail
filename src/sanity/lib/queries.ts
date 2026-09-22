@@ -100,7 +100,7 @@ export const ALL_PAGE_PATHS_QUERY = defineQuery(`
 export const GLOBAL_CONFIG_QUERY = defineQuery(`
   *[_type == "globalConfig" && _id == "globalConfig"][0] {
     analytics { googleAnalyticsId, googleTagManagerId, facebookPixelId },
-    postHog { projectApiKey, apiHost, sessionReplay },
+    postHog { projectApiKey, apiHost, projectId, sessionReplay },
     verification { google, bing },
     scripts { head, bodyEnd, requiresConsent },
     consentEnabled,

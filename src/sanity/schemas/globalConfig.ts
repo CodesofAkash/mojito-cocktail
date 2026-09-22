@@ -70,6 +70,14 @@ export const globalConfig = defineType({
           initialValue: "https://eu.i.posthog.com",
         }),
         defineField({
+          name: "projectId",
+          title: "Project ID",
+          type: "string",
+          description:
+            "The number in your PostHog URL, e.g. 280061. Needed for the Analytics tab in this Studio — not secret.",
+          validation: (r) => r.regex(/^\d+$/, { name: "digits" }).error("Digits only."),
+        }),
+        defineField({
           name: "sessionReplay",
           title: "Record sessions",
           type: "boolean",
