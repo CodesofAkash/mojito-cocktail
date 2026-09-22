@@ -1,12 +1,62 @@
 import { Badge, Box, Card, Flex, Heading, Spinner, Stack, Text } from "@sanity/ui";
 import { useEffect, useState } from "react";
 
+type Metric = { p75: number | null; samples: number };
+
 type Data = {
   funnel: { section: string; people: number }[];
   locales: { locale: string; people: number }[];
   totals: { people: number; views: number };
+  daily: { day: string; views: number; people: number }[];
+  vitals: Record<"LCP" | "FCP" | "CLS" | "INP", Metric>;
   windowDays: number;
 };
+
+// Google's Core Web Vitals thresholds, judged at the 75th percentile.
+const VITALS = {
+  LCP: { name: "Largest Contentful Paint", good: 2500, poor: 4000, unit: "ms" },
+  FCP: { name: "First Contentful Paint", good: 1800, poor: 3000, unit: "ms" },
+  CLS: { name: "Cumulative Layout Shift", good: 0.1, poor: 0.25, unit: "" },
+  INP: { name: "Interaction to Next Paint", good: 200, poor: 500, unit: "ms" },
+} as const;
+
+function rate(key: keyof typeof VITALS, value: number) {
+  const t = VITALS[key];
+  if (value <= t.good) return { tone: "positive", label: "Good" } as const;
+  if (value <= t.poor) return { tone: "caution", label: "Needs work" } as const;
+  return { tone: "critical", label: "Poor" } as const;
+}
+
+function format(key: keyof typeof VITALS, value: number) {
+  return key === "CLS" ? value.toFixed(2) : `${Math.round(value).toLocaleString()} ms`;
+}
+
+function TrafficChart({ daily }: { daily: Data["daily"] }) {
+  const max = Math.max(1, ...daily.map((d) => d.views));
+  return (
+    <Flex align="flex-end" gap={2} style={{ height: 140 }}>
+      {daily.map((d) => (
+        <div key={d.day} style={{ flex: 1, minWidth: 0 }} title={`${d.day}: ${d.views} views, ${d.people} visitors`}>
+          <Stack gap={2}>
+            <Text size={0} muted align="center">
+              {d.views}
+            </Text>
+            <Box
+              style={{
+                height: Math.max(4, Math.round((d.views / max) * 100)),
+                borderRadius: 3,
+                background: "var(--card-focus-ring-color)",
+              }}
+            />
+            <Text size={0} muted align="center">
+              {d.day.slice(5)}
+            </Text>
+          </Stack>
+        </div>
+      ))}
+    </Flex>
+  );
+}
 
 const LABELS: Record<string, string> = {
   hero: "Hero",
@@ -141,6 +191,63 @@ export function AnalyticsTool() {
                 ))}
               </Stack>
             )}
+          </Stack>
+        </Card>
+
+        <Card padding={4} radius={2} shadow={1}>
+          <Stack gap={4}>
+            <Stack gap={2}>
+              <Text weight="semibold">Traffic over time</Text>
+              <Text size={1} muted>
+                Page views per day. Hover a bar for unique visitors.
+              </Text>
+            </Stack>
+            {data.daily.length === 0 ? (
+              <Text size={1} muted>
+                No page views recorded yet.
+              </Text>
+            ) : (
+              <TrafficChart daily={data.daily} />
+            )}
+          </Stack>
+        </Card>
+
+        <Card padding={4} radius={2} shadow={1}>
+          <Stack gap={4}>
+            <Stack gap={2}>
+              <Text weight="semibold">Real-user Core Web Vitals</Text>
+              <Text size={1} muted>
+                Measured in real visitors&apos; browsers, at the 75th percentile Google ranks on.
+                This is not the PageSpeed score — that is one simulated load, and it cannot see
+                anything that happens after the page finishes loading.
+              </Text>
+            </Stack>
+            <Stack gap={3}>
+              {(Object.keys(VITALS) as (keyof typeof VITALS)[]).map((key) => {
+                const m = data.vitals[key];
+                const status = m.p75 == null ? null : rate(key, m.p75);
+                return (
+                  <div key={key}>
+                    <Flex align="center" justify="space-between" gap={3}>
+                      <Stack gap={2}>
+                        <Text size={1} weight="medium">
+                          {key} · {VITALS[key].name}
+                        </Text>
+                        <Text size={0} muted>
+                          {m.samples} samples · good ≤ {format(key, VITALS[key].good)}
+                        </Text>
+                      </Stack>
+                      <Flex align="center" gap={2}>
+                        <Text size={1} weight="semibold">
+                          {m.p75 == null ? "—" : format(key, m.p75)}
+                        </Text>
+                        {status && <Badge tone={status.tone}>{status.label}</Badge>}
+                      </Flex>
+                    </Flex>
+                  </div>
+                );
+              })}
+            </Stack>
           </Stack>
         </Card>
 
