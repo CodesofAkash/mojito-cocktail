@@ -29,13 +29,23 @@ export function HeroVideo({ src, poster }: Props) {
       video.preload = "auto";
       video.load();
     };
-    const id =
-      window.requestIdleCallback?.(start, { timeout: 3000 }) ??
-      window.setTimeout(start, 1500);
+    // Idle fires while the page is still loading, so 1.9 MB of video would
+    // compete with the poster. Waiting for `load` keeps it out of the LCP window.
+    let id: number | undefined;
+    const queue = () => {
+      id =
+        window.requestIdleCallback?.(start, { timeout: 3000 }) ??
+        window.setTimeout(start, 1500);
+    };
+
+    if (document.readyState === "complete") queue();
+    else window.addEventListener("load", queue, { once: true });
 
     return () => {
-      if (window.cancelIdleCallback) window.cancelIdleCallback(id as number);
-      else window.clearTimeout(id as number);
+      window.removeEventListener("load", queue);
+      if (id === undefined) return;
+      if (window.cancelIdleCallback) window.cancelIdleCallback(id);
+      else window.clearTimeout(id);
     };
   }, [src, reduced]);
 
@@ -141,6 +151,7 @@ export function HeroVideo({ src, poster }: Props) {
             height={540}
             sizes="100vw"
             preload
+            fetchPriority="high"
             className="video-poster"
             aria-hidden="true"
           />
