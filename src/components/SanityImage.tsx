@@ -16,11 +16,15 @@ type Props = {
   className?: string;
   sizes?: string;
   eager?: boolean;
+  priority?: boolean;
   fill?: boolean;
   id?: string;
 };
 
-export function SanityImage({ image, alt, className, sizes, eager, fill, id }: Props) {
+// `eager` only opts out of lazy loading. High fetch priority is a separate,
+// deliberate choice: granting it to decoration is how the LCP image ends up
+// queued behind things nobody is waiting for.
+export function SanityImage({ image, alt, className, sizes, eager, priority, fill, id }: Props) {
   if (!image?.ref) return null;
 
   const dims = imageDimensions(image.ref);
@@ -42,7 +46,7 @@ export function SanityImage({ image, alt, className, sizes, eager, fill, id }: P
         sizes={sizes ?? "100vw"}
         className={cn(className)}
         loading={eager ? "eager" : undefined}
-        fetchPriority={eager ? "high" : undefined}
+        fetchPriority={priority ? "high" : undefined}
       />
     );
   }
@@ -57,7 +61,7 @@ export function SanityImage({ image, alt, className, sizes, eager, fill, id }: P
       sizes={sizes}
       className={cn(className)}
       loading={eager ? "eager" : undefined}
-      fetchPriority={eager ? "high" : undefined}
+      fetchPriority={priority ? "high" : undefined}
     />
   );
 }

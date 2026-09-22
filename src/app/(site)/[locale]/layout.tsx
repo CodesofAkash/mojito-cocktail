@@ -2,15 +2,16 @@ import type { Metadata } from "next";
 import { DM_Serif_Text, Mona_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 import { VisualEditing } from "next-sanity/visual-editing";
+import { SpeedInsights } from "@/components/SpeedInsights";
 import { draftMode } from "next/headers";
 
 import { sanityFetch } from "@/sanity/lib/live";
 import { SanityLive } from "@/sanity/lib/live";
-import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
+import { GLOBAL_CONFIG_QUERY, SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import { getLocales } from "@/lib/locale";
 import { siteUrl } from "@/lib/site";
-import type { SiteSettingsData } from "@/sanity/types";
+import type { GlobalConfigData, SiteSettingsData } from "@/sanity/types";
 import "../../globals.css";
 
 const monaSans = Mona_Sans({
@@ -36,17 +37,25 @@ export async function generateMetadata({
   const { locale } = await params;
   const locales = await getLocales();
 
-  // hreflang tells search engines these pages are translations of one another.
-  // It only works with valid BCP-47 codes, which is why the Studio enforces them.
-  const languages = Object.fromEntries(
-    locales.map((l) => [l.code, l.isDefault ? "/" : `/${l.code}`]),
-  );
+  // hreflang ties these pages together as translations; x-default names the one
+  // served to a visitor matching none (AK-I18N-008). Both need valid BCP-47.
+  const languages = {
+    ...Object.fromEntries(locales.map((l) => [l.code, l.isDefault ? "/" : `/${l.code}`])),
+    "x-default": "/",
+  };
 
   const isDefault = locales.find((l) => l.code === locale)?.isDefault ?? false;
+
+  const { data: config } = await sanityFetch({ query: GLOBAL_CONFIG_QUERY, stega: false });
+  const verification = (config as GlobalConfigData)?.verification;
 
   return {
     metadataBase: new URL(siteUrl()),
     alternates: { canonical: isDefault ? "/" : `/${locale}`, languages },
+    verification: {
+      google: verification?.google ?? undefined,
+      other: verification?.bing ? { "msvalidate.01": verification.bing } : undefined,
+    },
   };
 }
 
@@ -85,7 +94,11 @@ export default async function LocaleLayout({
       </head>
       <body style={noise ? ({ "--noise": noise } as React.CSSProperties) : undefined}>
         {children}
-        {isDraft && <SanityLive />}
+        {/* Cookieless, so it needs no consent and measures every visitor. */}
+        <SpeedInsights />
+        {/* Not draft-gated: defineLive only configures revalidation — nothing
+            revalidates until the next deploy unless this is actually rendered. */}
+        <SanityLive />
         {isDraft && <VisualEditing />}
       </body>
     </html>

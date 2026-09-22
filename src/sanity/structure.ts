@@ -42,6 +42,16 @@ export const structure: StructureResolver = async (S, context) => {
     .items([
       byLocale("page", t("pages"), "pages"),
       byLocale("siteSettings", t("settings"), "settings"),
+      // Not per-locale: switches and third-party IDs cannot differ by market.
+      S.listItem()
+        .title(t("global"))
+        .id("globalConfig")
+        .child(
+          S.document()
+            .schemaType("globalConfig")
+            .documentId("globalConfig")
+            .title(t("global")),
+        ),
       S.divider(),
       S.listItem()
         .title(t("locales"))

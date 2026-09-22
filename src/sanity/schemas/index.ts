@@ -1,6 +1,7 @@
 import type { SchemaTypeDefinition } from "sanity";
 
 import { animation } from "./animation";
+import { globalConfig } from "./globalConfig";
 import { locale } from "./locale";
 import { page } from "./page";
 import { seo } from "./seo";
@@ -17,6 +18,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   locale,
   page,
   siteSettings,
+  globalConfig,
   // shared objects
   animation,
   seo,

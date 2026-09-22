@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { draftMode } from "next/headers";
 
 import { sanityFetch } from "@/sanity/lib/live";
 import {
   ALL_PAGE_PATHS_QUERY,
+  GLOBAL_CONFIG_QUERY,
   LOCALE_BY_CODE_QUERY,
   PAGE_QUERY,
   SITE_SETTINGS_QUERY,
@@ -13,7 +15,9 @@ import { SectionRenderer } from "@/components/SectionRenderer";
 import { getLocales } from "@/lib/locale";
 import { Navbar } from "@/components/Navbar";
 import { JsonLd } from "@/components/JsonLd";
-import type { PageData, PagePath, SiteSettingsData } from "@/sanity/types";
+import { Maintenance } from "@/components/Maintenance";
+import { ConsentGate } from "@/components/consent/ConsentGate";
+import type { GlobalConfigData, PageData, PagePath, SiteSettingsData } from "@/sanity/types";
 
 type Params = { locale: string };
 
@@ -35,6 +39,7 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
+
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale } = await params;
@@ -64,22 +69,32 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function HomePage({ params }: { params: Promise<Params> }) {
   const { locale } = await params;
 
-  const [{ data: page }, { data: settings }, { data: localeDoc }, locales] = await Promise.all([
-    sanityFetch({ query: PAGE_QUERY, params: { slug: "home", locale } }),
-    sanityFetch({ query: SITE_SETTINGS_QUERY, params: { locale } }),
-    sanityFetch({ query: LOCALE_BY_CODE_QUERY, params: { locale } }),
-    getLocales(),
-  ]);
+  const [{ data: page }, { data: settings }, { data: localeDoc }, { data: config }, locales] =
+    await Promise.all([
+      sanityFetch({ query: PAGE_QUERY, params: { slug: "home", locale } }),
+      sanityFetch({ query: SITE_SETTINGS_QUERY, params: { locale } }),
+      sanityFetch({ query: LOCALE_BY_CODE_QUERY, params: { locale } }),
+      sanityFetch({ query: GLOBAL_CONFIG_QUERY }),
+      getLocales(),
+    ]);
 
   // An unknown locale, or one with no content yet, is a genuine 404 rather
   // than a blank page.
   const typedPage = page as PageData;
   const typedSettings = settings as SiteSettingsData;
   const locale_ = localeDoc as { currency?: string } | null;
+  const typedConfig = config as GlobalConfigData;
 
   // No silent defaults: an unknown locale, missing settings or a locale with
   // no currency is a content error, and 404 makes it visible immediately.
   if (!typedPage || !typedSettings || !locale_?.currency) notFound();
+
+  // AK-SAN-031 — a draft session bypasses maintenance, so an editor can still
+  // preview the content they are holding the site to fix.
+  const { isEnabled: isDraft } = await draftMode();
+  if (typedConfig?.maintenanceEnabled && !isDraft) {
+    return <Maintenance data={typedSettings.maintenance} />;
+  }
 
   const currency = locale_.currency;
   const socials = typedSettings.socials ?? [];
@@ -100,6 +115,14 @@ export default async function HomePage({ params }: { params: Promise<Params> }) 
         ))}
       </main>
       <JsonLd page={typedPage} settings={typedSettings} locale={locale} />
+      <ConsentGate
+        ids={typedConfig?.analytics ?? null}
+        postHog={typedConfig?.postHog ?? null}
+        scripts={typedConfig?.scripts ?? null}
+        copy={typedSettings.cookieConsent ?? null}
+        consentEnabled={typedConfig?.consentEnabled !== false}
+        locale={locale}
+      />
     </>
   );
 }

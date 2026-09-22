@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SectionWrapper } from "../SectionWrapper";
-import { gsap, useGSAP } from "../motion/gsap-init";
+import { useGsap } from "../motion/useGsap";
 import { SanityImage, type SanityImageValue } from "../SanityImage";
 import { useReducedMotion } from "../motion/useReducedMotion";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ export function Menu({ data }: { data: MenuData }) {
   const drinks = data.drinks ?? [];
   const [index, setIndex] = useState(0);
   const reduced = useReducedMotion();
+  const mod = useGsap(!reduced && drinks.length > 0);
 
   const total = drinks.length;
   const at = (offset: number) => (total ? drinks[(index + offset + total) % total] : undefined);
@@ -35,13 +36,19 @@ export function Menu({ data }: { data: MenuData }) {
 
   const goTo = (i: number) => total && setIndex(((i % total) + total) % total);
 
-  useGSAP(() => {
-    if (reduced || !total) return;
-    gsap.fromTo(".js-slide-title", { opacity: 0 }, { opacity: 1, duration: 1 });
-    gsap.fromTo(".cocktail img", { opacity: 0, xPercent: -100 }, { opacity: 1, xPercent: 0, duration: 1, ease: "power1.inOut" });
-    gsap.fromTo(".details h2", { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, ease: "power1.inOut" });
-    gsap.fromTo(".details p", { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, ease: "power1.inOut" });
-  }, [index, reduced, total]);
+  useEffect(() => {
+    if (!mod || !total) return;
+    const { gsap } = mod;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(".js-slide-title", { opacity: 0 }, { opacity: 1, duration: 1 });
+      gsap.fromTo(".cocktail img", { opacity: 0, xPercent: -100 }, { opacity: 1, xPercent: 0, duration: 1, ease: "power1.inOut" });
+      gsap.fromTo(".details h2", { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, ease: "power1.inOut" });
+      gsap.fromTo(".details p", { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, ease: "power1.inOut" });
+    });
+
+    return () => ctx.revert();
+  }, [mod, index, total]);
 
   if (!total || !current) return null;
 

@@ -49,3 +49,6 @@ lerna-debug.log*
 
 # Sanity CLI generated runtime
 .sanity
+
+# throwaway one-off scripts
+scripts/.*.mjs

@@ -106,6 +106,79 @@ export const siteSettings = defineType({
       type: "seo",
       description: "Used for any page that has not set its own SEO.",
     }),
+    defineField({
+      name: "cookieConsent",
+      title: "Cookie consent",
+      type: "object",
+      description:
+        "The banner's wording, in this language. Whether it is shown at all is in Global configuration, because that switch cannot differ per market.",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "message",
+          type: "text",
+          rows: 2,
+          description: "Say plainly what is collected and why.",
+        }),
+        defineField({ name: "acceptLabel", type: "string", description: "e.g. 'Accept'." }),
+        defineField({ name: "declineLabel", type: "string", description: "e.g. 'Decline'." }),
+        defineField({
+          name: "policyUrl",
+          title: "Privacy policy link",
+          type: "url",
+          description: "Optional. Shown beside the buttons.",
+        }),
+      ],
+    }),
+    defineField({
+      name: "notFound",
+      title: "404 page",
+      type: "object",
+      description:
+        "Shown when a visitor reaches a URL that does not exist. Worth writing: a mistyped or stale link is a real visitor who can still be kept.",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "heading",
+          type: "string",
+          description: "e.g. 'This page has left the bar'.",
+          validation: (r) => r.required(),
+        }),
+        defineField({
+          name: "message",
+          type: "text",
+          rows: 2,
+          description: "One sentence explaining what happened.",
+        }),
+        defineField({
+          name: "linkLabel",
+          type: "string",
+          description: "Wording of the link home, e.g. 'Back to the bar'.",
+          validation: (r) => r.required(),
+        }),
+      ],
+    }),
+    defineField({
+      name: "maintenance",
+      title: "Maintenance mode",
+      type: "object",
+      description:
+        "The holding page's wording, in this language. Whether the site is actually down is in Global configuration, because it cannot be true in one market and false in another.",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "heading",
+          type: "string",
+          description: "Shown large on the holding page, e.g. 'Back shortly'.",
+        }),
+        defineField({
+          name: "message",
+          type: "text",
+          rows: 3,
+          description: "One or two sentences telling a visitor when to come back.",
+        }),
+      ],
+    }),
   ],
   preview: { select: { title: "name", subtitle: "language" } },
 });

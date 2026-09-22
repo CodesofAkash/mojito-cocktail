@@ -1,20 +1,21 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
-import { gsap, useGSAP } from "./gsap-init";
+import { useEffect, useRef, type ReactNode } from "react";
+import { useGsap } from "./useGsap";
 import { useReducedMotion } from "./useReducedMotion";
 
 export function NavbarMotion({ children }: { children: ReactNode }) {
   const scope = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const mod = useGsap(!reduced);
 
-  useGSAP(
-    () => {
-      if (reduced) return;
-      const nav = scope.current?.querySelector("nav");
-      if (!nav) return;
+  useEffect(() => {
+    if (!mod) return;
+    const nav = scope.current?.querySelector("nav");
+    if (!nav) return;
 
-      gsap
+    const ctx = mod.gsap.context(() => {
+      mod.gsap
         .timeline({ scrollTrigger: { trigger: nav, start: "bottom top" } })
         .fromTo(
           nav,
@@ -26,9 +27,10 @@ export function NavbarMotion({ children }: { children: ReactNode }) {
             ease: "power1.inOut",
           },
         );
-    },
-    { scope, dependencies: [reduced] },
-  );
+    }, scope);
+
+    return () => ctx.revert();
+  }, [mod]);
 
   return (
     <div ref={scope} style={{ display: "contents" }}>

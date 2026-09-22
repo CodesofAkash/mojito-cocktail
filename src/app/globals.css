@@ -213,8 +213,13 @@ body {
         }
     }
 
-    video {
+    video,
+    .video-poster {
         @apply w-full max-w-[var(--shell-max)] md:h-[min(80%,50rem)] h-1/2 absolute bottom-0 inset-x-0 mx-auto md:object-contain object-bottom object-cover;
+    }
+
+    video {
+        @apply transition-opacity duration-300;
     }
 
     #cocktails {
@@ -465,6 +470,53 @@ body {
 
         .drink-img {
             @apply absolute bottom-0 edge-right lg:w-96 w-1/3 pointer-events-none;
+        }
+    }
+}
+@layer components {
+    /* Maintenance holding page and 404 share a shape: one centred column on
+       the site's own background, so neither looks like a framework default. */
+    .standalone-page {
+        @apply min-h-dvh flex flex-col items-center justify-center text-center gap-5 px-5;
+
+        h1 {
+            @apply text-5xl md:text-7xl font-modern-negra text-white;
+        }
+
+        p {
+            @apply text-white/70 max-w-prose;
+        }
+
+        a {
+            @apply mt-3 underline underline-offset-4 text-white hover:text-white/70;
+        }
+    }
+}
+
+@layer components {
+    .cookie-banner {
+        /* No backdrop-filter: it makes the compositor re-render the hero behind
+           it, which showed up as 2 s of LCP render delay for no visual gain
+           over a 96%-opaque background. */
+        @apply fixed bottom-0 inset-x-0 z-50 flex flex-col md:flex-row md:items-center gap-4
+               px-5 py-4 bg-black border-t border-white/15;
+
+        p {
+            @apply text-sm text-white/80 flex-1;
+        }
+
+        .cookie-banner__actions {
+            @apply flex items-center gap-3 shrink-0;
+        }
+
+        a {
+            @apply text-sm text-white/60 underline underline-offset-4 hover:text-white;
+        }
+
+        /* Colour lives on the component, not here: a Tailwind utility on the
+           element always beats an @apply rule in a component layer. */
+        .cookie-banner__btn {
+            @apply text-sm px-4 py-2 rounded-full border transition-colors duration-200;
         }
     }
 }

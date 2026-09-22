@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ScrollTrigger, useGSAP } from "../motion/gsap-init";
-import { useIsMobile, useReducedMotion } from "../motion/useReducedMotion";
+import { useGsap } from "../motion/useGsap";
+import { useReducedMotion } from "../motion/useReducedMotion";
 
 type Props = { src: string | null; poster: string | null };
 
@@ -12,15 +13,14 @@ export function HeroVideo({ src, poster }: Props) {
   const startedRef = useRef(false);
   const [ready, setReady] = useState(false);
   const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
 
-  // Always in the DOM so `video { ... }` styles it and the poster paints;
-  // preload="none" keeps the file off the critical path until idle.
+  // The poster is a real <img> underneath, so the file stays off the critical
+  // path entirely and only starts once the browser is idle.
   useEffect(() => {
     const video = videoRef.current;
-    // Mobile keeps the poster only: 1.9 MB for an effect that barely reads
-    // on a phone, and it was the LCP element.
-    if (!video || !src || reduced || isMobile || startedRef.current) return;
+    // Phones get the video too — the scroll effect is the point of the hero.
+    // It costs LCP, which is a deliberate trade, not an oversight.
+    if (!video || !src || reduced || startedRef.current) return;
 
     // Each load() aborts the in-flight fetch, so re-running this effect
     // cancels the download forever. Fire exactly once.
@@ -37,7 +37,7 @@ export function HeroVideo({ src, poster }: Props) {
       if (window.cancelIdleCallback) window.cancelIdleCallback(id as number);
       else window.clearTimeout(id as number);
     };
-  }, [src, reduced, isMobile]);
+  }, [src, reduced]);
 
   // The track spans sections one and two; the sticky child rides along and is
   // carried away naturally at the track's end. Native sticky rather than a
@@ -46,27 +46,48 @@ export function HeroVideo({ src, poster }: Props) {
     const track = trackRef.current;
     if (!track) return;
 
+    let raf = 0;
+    let last = -1;
+
     const size = () => {
+      raf = 0;
       const second = document.querySelector("#cocktails") ?? document.querySelector("#hero");
       if (!second) return;
-      const bottom = second.getBoundingClientRect().bottom + window.scrollY;
-      track.style.height = `${Math.round(bottom)}px`;
+      const bottom = Math.round(second.getBoundingClientRect().bottom + window.scrollY);
+      // Writing an unchanged height still invalidates layout, and the observer
+      // that woke us fires again on the result.
+      if (bottom === last) return;
+      last = bottom;
+      track.style.height = `${bottom}px`;
+    };
+
+    // Every image that lands resizes the body. Measuring inline would force a
+    // synchronous reflow on each one — reading a rect straight after writing a
+    // height is the classic thrash, and there are three dozen images here.
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(size);
     };
 
     size();
-    const ro = new ResizeObserver(size);
+    const ro = new ResizeObserver(schedule);
     ro.observe(document.body);
-    window.addEventListener("resize", size);
+    window.addEventListener("resize", schedule);
     return () => {
+      if (raf) cancelAnimationFrame(raf);
       ro.disconnect();
-      window.removeEventListener("resize", size);
+      window.removeEventListener("resize", schedule);
     };
   }, []);
 
-  useGSAP(() => {
+  // Gated on canplaythrough, so GSAP is fetched only once there is a video
+  // to scrub — never for a visitor who leaves before it loads.
+  const mod = useGsap(ready && !reduced);
+
+  useEffect(() => {
     const video = videoRef.current;
     const track = trackRef.current;
-    if (!video || !track || !ready || reduced) return;
+    if (!mod || !video || !track || !ready || reduced) return;
+    const { ScrollTrigger } = mod;
 
     let target = 0;
     let seeking = false;
@@ -103,20 +124,34 @@ export function HeroVideo({ src, poster }: Props) {
       cancelAnimationFrame(raf);
       st.kill();
     };
-  }, [ready, reduced]);
+  }, [mod, ready, reduced]);
 
   if (!src) return null;
 
   return (
-    <div ref={trackRef} className="video-track absolute inset-x-0 top-0 z-0 pointer-events-none">
+    <div ref={trackRef} className="video-track absolute inset-x-0 top-0 z-0 min-h-dvh pointer-events-none">
       <div className="video sticky top-0 h-dvh">
+        {/* A real <img>, not the video's own poster: a media element paints its
+            poster only once it initialises, measured at 8.2 s against 2.5 s. */}
+        {poster && (
+          <Image
+            src={poster}
+            alt=""
+            width={960}
+            height={540}
+            sizes="100vw"
+            preload
+            className="video-poster"
+            aria-hidden="true"
+          />
+        )}
         <video
           ref={videoRef}
           src={src}
-          poster={poster ?? undefined}
           muted
           playsInline
           preload="none"
+          className={ready ? "opacity-100" : "opacity-0"}
           onCanPlayThrough={() => setReady(true)}
         />
       </div>
